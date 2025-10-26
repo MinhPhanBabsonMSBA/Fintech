@@ -1,0 +1,2247 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TaxStream - Real-Time Tax Withholding for Digital Economy</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary: #1E6FDB;
+            --primary-dark: #1557B0;
+            --primary-light: #4A9FFF;
+            --success: #10B981;
+            --warning: #F59E0B;
+            --danger: #EF4444;
+            --dark: #1F2937;
+            --medium: #6B7280;
+            --light: #F3F4F6;
+            --white: #FFFFFF;
+            --gradient: linear-gradient(135deg, #1E6FDB 0%, #4A9FFF 100%);
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
+            background: linear-gradient(180deg, #FFFFFF 0%, #E8F2FF 100%);
+            min-height: 100vh;
+            color: var(--dark);
+        }
+
+        /* Header */
+        .header {
+            background: var(--white);
+            padding: 1rem 2rem;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .header-content {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--primary);
+            cursor: pointer;
+        }
+
+        .logo-icon {
+            width: 40px;
+            height: 40px;
+            background: var(--primary);
+            border-radius: 8px;
+            padding: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .nav-items {
+            display: flex;
+            gap: 2rem;
+            align-items: center;
+        }
+
+        .nav-link {
+            color: var(--medium);
+            text-decoration: none;
+            font-weight: 500;
+            transition: color 0.2s;
+            cursor: pointer;
+        }
+
+        .nav-link:hover,
+        .nav-link.active {
+            color: var(--primary);
+        }
+
+        /* Container */
+        .container {
+            max-width: 1400px;
+            margin: 2rem auto;
+            padding: 0 2rem;
+        }
+
+        /* Onboarding Hero */
+        .onboarding-hero {
+            background: var(--gradient);
+            color: white;
+            padding: 3rem;
+            border-radius: 16px;
+            margin-bottom: 2rem;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .onboarding-hero::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%);
+            animation: rotate 20s linear infinite;
+        }
+
+        @keyframes rotate {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+
+        .onboarding-hero h1 {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+            position: relative;
+            z-index: 1;
+        }
+
+        .onboarding-hero p {
+            font-size: 1.125rem;
+            opacity: 0.95;
+            margin-bottom: 2rem;
+            position: relative;
+            z-index: 1;
+        }
+
+        .stats-row {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 2rem;
+            margin-top: 2rem;
+        }
+
+        .stat-item {
+            text-align: center;
+        }
+
+        .stat-value {
+            font-size: 2rem;
+            font-weight: 700;
+        }
+
+        .stat-label {
+            font-size: 0.875rem;
+            opacity: 0.8;
+        }
+
+        /* Cards */
+        .summary-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .summary-card {
+            background: var(--white);
+            padding: 1.5rem;
+            border-radius: 12px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+            transition: transform 0.2s, box-shadow 0.2s;
+            cursor: pointer;
+            position: relative;
+        }
+
+        .summary-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+
+        .card-label {
+            color: var(--medium);
+            font-size: 0.875rem;
+            font-weight: 500;
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .card-value {
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--dark);
+            margin-bottom: 0.5rem;
+        }
+
+        .card-change {
+            font-size: 0.875rem;
+            display: flex;
+            align-items: center;
+            gap: 0.25rem;
+        }
+
+        /* Sections */
+        .section {
+            background: var(--white);
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        }
+
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+        }
+
+        .section-title {
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: var(--dark);
+        }
+
+        /* Buttons */
+        .btn {
+            padding: 0.625rem 1.25rem;
+            border-radius: 8px;
+            border: none;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-size: 0.875rem;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .btn-primary {
+            background: var(--primary);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: var(--primary-dark);
+            transform: translateY(-1px);
+            box-shadow: 0 4px 6px rgba(79, 70, 229, 0.3);
+        }
+
+        .btn-secondary {
+            background: var(--light);
+            color: var(--dark);
+        }
+
+        .btn-success {
+            background: var(--success);
+            color: white;
+        }
+
+        .btn-danger {
+            background: var(--danger);
+            color: white;
+        }
+
+        .btn-large {
+            padding: 1rem 2rem;
+            font-size: 1.125rem;
+        }
+
+        /* Platform Authentication */
+        .platform-auth-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        .platform-auth-card {
+            border: 2px solid var(--light);
+            border-radius: 12px;
+            padding: 1.5rem;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .platform-auth-card:hover {
+            border-color: var(--primary);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 12px rgba(0,0,0,0.1);
+        }
+
+        .platform-auth-card.connected {
+            border-color: var(--success);
+            background: rgba(16, 185, 129, 0.05);
+        }
+
+        .platform-auth-card.connecting {
+            border-color: var(--warning);
+            background: rgba(245, 158, 11, 0.05);
+        }
+
+        .platform-logo {
+            width: 60px;
+            height: 60px;
+            margin: 0 auto 1rem;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: white;
+        }
+
+        .stripe-logo {
+            background: linear-gradient(135deg, #635BFF, #4239C8);
+        }
+
+        .paypal-logo {
+            background: linear-gradient(135deg, #003087, #009CDE);
+        }
+
+        .shopify-logo {
+            background: linear-gradient(135deg, #5E8E3E, #95BF47);
+        }
+
+        .youtube-logo {
+            background: linear-gradient(135deg, #FF0000, #CC0000);
+        }
+
+        .taxstream-logo {
+            background: var(--gradient);
+            position: relative;
+        }
+
+        .taxstream-logo svg {
+            width: 30px;
+            height: 30px;
+        }
+
+        .platform-name {
+            font-weight: 600;
+            font-size: 1.125rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .platform-status {
+            font-size: 0.875rem;
+            color: var(--medium);
+            margin-bottom: 1rem;
+        }
+
+        .connection-status {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: var(--light);
+        }
+
+        .connection-status.connected {
+            background: var(--success);
+            animation: pulse 2s infinite;
+        }
+
+        /* Tax Breakdown */
+        .tax-breakdown {
+            background: linear-gradient(135deg, #F3F4F6, #E5E7EB);
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .breakdown-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+
+        .breakdown-title {
+            font-weight: 600;
+            color: var(--dark);
+        }
+
+        .breakdown-toggle {
+            cursor: pointer;
+            color: var(--primary);
+            font-size: 0.875rem;
+        }
+
+        .breakdown-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0.75rem 0;
+            border-bottom: 1px solid rgba(0,0,0,0.05);
+        }
+
+        .breakdown-item:last-child {
+            border-bottom: none;
+            font-weight: 600;
+            font-size: 1.125rem;
+            padding-top: 1rem;
+        }
+
+        .breakdown-label {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .breakdown-icon {
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.75rem;
+        }
+
+        .federal-icon {
+            background: rgba(30, 111, 219, 0.1);
+            color: var(--primary);
+        }
+
+        .state-icon {
+            background: rgba(245, 158, 11, 0.1);
+            color: var(--warning);
+        }
+
+        .self-icon {
+            background: rgba(16, 185, 129, 0.1);
+            color: var(--success);
+        }
+
+        /* Forms */
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-label {
+            display: block;
+            font-weight: 500;
+            margin-bottom: 0.5rem;
+            color: var(--dark);
+        }
+
+        .form-input {
+            width: 100%;
+            padding: 0.625rem 1rem;
+            border: 1px solid var(--light);
+            border-radius: 8px;
+            font-size: 1rem;
+            transition: border-color 0.2s;
+        }
+
+        .form-input:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.1);
+        }
+
+        .form-select {
+            width: 100%;
+            padding: 0.625rem 1rem;
+            border: 1px solid var(--light);
+            border-radius: 8px;
+            font-size: 1rem;
+            background: white;
+            cursor: pointer;
+        }
+
+        /* Real-time Transaction Feed */
+        .transaction-feed {
+            max-height: 400px;
+            overflow-y: auto;
+        }
+
+        .transaction-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem;
+            border-bottom: 1px solid var(--light);
+            transition: background 0.2s;
+            animation: slideIn 0.5s ease-out;
+        }
+
+        .transaction-item:hover {
+            background: rgba(79, 70, 229, 0.02);
+        }
+
+        .transaction-left {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .transaction-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.25rem;
+        }
+
+        .income-transaction {
+            background: rgba(16, 185, 129, 0.1);
+            color: var(--success);
+        }
+
+        .withholding-transaction {
+            background: rgba(30, 111, 219, 0.1);
+            color: var(--primary);
+        }
+
+        .transaction-details {
+            flex: 1;
+        }
+
+        .transaction-description {
+            font-weight: 500;
+            color: var(--dark);
+            margin-bottom: 0.25rem;
+        }
+
+        .transaction-time {
+            font-size: 0.75rem;
+            color: var(--medium);
+        }
+
+        .transaction-amounts {
+            text-align: right;
+        }
+
+        .gross-amount {
+            font-weight: 600;
+            color: var(--success);
+            margin-bottom: 0.25rem;
+        }
+
+        .tax-amount {
+            font-size: 0.875rem;
+            color: var(--primary);
+        }
+
+        /* Modal */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .modal.active {
+            display: flex;
+        }
+
+        .modal-content {
+            background: white;
+            border-radius: 12px;
+            padding: 2rem;
+            max-width: 600px;
+            width: 90%;
+            max-height: 90vh;
+            overflow-y: auto;
+            animation: slideUp 0.3s ease-out;
+        }
+
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateX(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+        }
+
+        .modal-title {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: var(--dark);
+        }
+
+        .modal-close {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background: var(--light);
+            border: none;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.25rem;
+            color: var(--medium);
+        }
+
+        /* Subscription Pricing */
+        .pricing-cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 1.5rem;
+            margin: 2rem 0;
+        }
+
+        .pricing-card {
+            border: 2px solid var(--light);
+            border-radius: 12px;
+            padding: 2rem;
+            text-align: center;
+            position: relative;
+            transition: all 0.3s;
+        }
+
+        .pricing-card.recommended {
+            border-color: var(--primary);
+            transform: scale(1.05);
+            box-shadow: 0 10px 30px rgba(79, 70, 229, 0.2);
+        }
+
+        .pricing-badge {
+            position: absolute;
+            top: -12px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: var(--primary);
+            color: white;
+            padding: 0.25rem 1rem;
+            border-radius: 100px;
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+
+        .pricing-title {
+            font-size: 1.5rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+        }
+
+        .pricing-price {
+            font-size: 3rem;
+            font-weight: 700;
+            color: var(--primary);
+            margin-bottom: 0.5rem;
+        }
+
+        .pricing-period {
+            color: var(--medium);
+            font-size: 0.875rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .pricing-features {
+            list-style: none;
+            margin-bottom: 2rem;
+        }
+
+        .pricing-features li {
+            padding: 0.5rem 0;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            justify-content: center;
+        }
+
+        .check-icon {
+            color: var(--success);
+        }
+
+        /* Progress Indicators */
+        .progress-bar {
+            width: 100%;
+            height: 8px;
+            background: var(--light);
+            border-radius: 100px;
+            overflow: hidden;
+            margin: 1rem 0;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: var(--gradient);
+            transition: width 0.5s ease-out;
+        }
+
+        /* Loan Calculator */
+        .loan-calculator {
+            background: var(--light);
+            border-radius: 12px;
+            padding: 1.5rem;
+        }
+
+        .loan-input-group {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .loan-result {
+            background: white;
+            border-radius: 8px;
+            padding: 1rem;
+            margin-top: 1rem;
+        }
+
+        .loan-result-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 0.5rem 0;
+            border-bottom: 1px solid var(--light);
+        }
+
+        .loan-result-row:last-child {
+            border-bottom: none;
+            font-weight: 600;
+            font-size: 1.125rem;
+            padding-top: 1rem;
+        }
+
+        /* Notifications */
+        .notification {
+            position: fixed;
+            top: 5rem;
+            right: 2rem;
+            background: white;
+            padding: 1rem 1.5rem;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            display: none;
+            align-items: center;
+            gap: 0.75rem;
+            z-index: 2000;
+            animation: slideInRight 0.3s ease-out;
+        }
+
+        .notification.show {
+            display: flex;
+        }
+
+        @keyframes slideInRight {
+            from {
+                opacity: 0;
+                transform: translateX(100px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        /* Live sync indicator */
+        @keyframes pulse {
+            0% {
+                box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.7);
+            }
+            70% {
+                box-shadow: 0 0 0 10px rgba(16, 185, 129, 0);
+            }
+            100% {
+                box-shadow: 0 0 0 0 rgba(16, 185, 129, 0);
+            }
+        }
+
+        .live-indicator {
+            width: 8px;
+            height: 8px;
+            background: var(--success);
+            border-radius: 50%;
+            animation: pulse 2s infinite;
+        }
+
+        /* Toggle Switch */
+        .toggle {
+            width: 44px;
+            height: 24px;
+            background: var(--light);
+            border-radius: 100px;
+            position: relative;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+
+        .toggle.active {
+            background: var(--primary);
+        }
+
+        .toggle-slider {
+            width: 20px;
+            height: 20px;
+            background: white;
+            border-radius: 50%;
+            position: absolute;
+            top: 2px;
+            left: 2px;
+            transition: transform 0.3s;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+        }
+
+        .toggle.active .toggle-slider {
+            transform: translateX(20px);
+        }
+
+        /* AI Assistant Styles */
+        .ai-assistant-container {
+            position: fixed;
+            bottom: 2rem;
+            right: 2rem;
+            z-index: 1000;
+        }
+
+        .ai-chat-button {
+            background: var(--gradient);
+            color: white;
+            padding: 1rem 1.5rem;
+            border-radius: 100px;
+            box-shadow: 0 4px 12px rgba(30, 111, 219, 0.3);
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            cursor: pointer;
+            transition: all 0.3s;
+            position: relative;
+        }
+
+        .ai-chat-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(30, 111, 219, 0.4);
+        }
+
+        .ai-avatar {
+            width: 36px;
+            height: 36px;
+            background: rgba(255,255,255,0.2);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .ai-avatar-small {
+            width: 32px;
+            height: 32px;
+            background: var(--gradient);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .ai-status-indicator {
+            width: 10px;
+            height: 10px;
+            background: #10B981;
+            border-radius: 50%;
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            animation: pulse 2s infinite;
+        }
+
+        .ai-chat-window {
+            position: absolute;
+            bottom: 5rem;
+            right: 0;
+            width: 420px;
+            height: 600px;
+            background: white;
+            border-radius: 16px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+            display: none;
+            flex-direction: column;
+            animation: slideUp 0.3s ease-out;
+        }
+
+        .ai-chat-window.active {
+            display: flex;
+        }
+
+        .ai-chat-header {
+            padding: 1.25rem;
+            background: var(--gradient);
+            color: white;
+            border-radius: 16px 16px 0 0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .ai-close-btn {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background: rgba(255,255,255,0.2);
+            border: none;
+            color: white;
+            font-size: 1.5rem;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: background 0.2s;
+        }
+
+        .ai-close-btn:hover {
+            background: rgba(255,255,255,0.3);
+        }
+
+        .ai-quick-actions {
+            padding: 1rem;
+            background: #F8FAFB;
+            border-bottom: 1px solid var(--light);
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 0.5rem;
+        }
+
+        .ai-quick-btn {
+            padding: 0.5rem;
+            background: white;
+            border: 1px solid var(--light);
+            border-radius: 8px;
+            font-size: 0.825rem;
+            cursor: pointer;
+            transition: all 0.2s;
+            text-align: left;
+        }
+
+        .ai-quick-btn:hover {
+            border-color: var(--primary);
+            background: rgba(30, 111, 219, 0.05);
+        }
+
+        .ai-chat-messages {
+            flex: 1;
+            padding: 1rem;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .ai-message {
+            display: flex;
+            gap: 0.75rem;
+            animation: fadeInUp 0.3s ease-out;
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .ai-message.user {
+            flex-direction: row-reverse;
+        }
+
+        .message-avatar {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background: var(--gradient);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.75rem;
+            font-weight: 600;
+            flex-shrink: 0;
+        }
+
+        .ai-message.user .message-avatar {
+            background: var(--success);
+        }
+
+        .message-content {
+            max-width: 75%;
+            padding: 0.75rem 1rem;
+            background: #F3F4F6;
+            border-radius: 12px;
+            font-size: 0.875rem;
+            line-height: 1.5;
+        }
+
+        .ai-message.user .message-content {
+            background: var(--primary);
+            color: white;
+        }
+
+        .message-content p {
+            margin: 0;
+        }
+
+        .message-content ul {
+            margin: 0.5rem 0;
+        }
+
+        .ai-typing {
+            display: flex;
+            gap: 0.25rem;
+            padding: 0.5rem;
+        }
+
+        .typing-dot {
+            width: 8px;
+            height: 8px;
+            background: var(--medium);
+            border-radius: 50%;
+            animation: typing 1.4s infinite;
+        }
+
+        .typing-dot:nth-child(2) {
+            animation-delay: 0.2s;
+        }
+
+        .typing-dot:nth-child(3) {
+            animation-delay: 0.4s;
+        }
+
+        @keyframes typing {
+            0%, 60%, 100% {
+                transform: translateY(0);
+            }
+            30% {
+                transform: translateY(-10px);
+            }
+        }
+
+        .ai-chat-input-container {
+            padding: 1rem;
+            border-top: 1px solid var(--light);
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .ai-chat-input {
+            flex: 1;
+            padding: 0.75rem;
+            border: 1px solid var(--light);
+            border-radius: 24px;
+            outline: none;
+            font-size: 0.875rem;
+            transition: border-color 0.2s;
+        }
+
+        .ai-chat-input:focus {
+            border-color: var(--primary);
+        }
+
+        .ai-send-btn {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: var(--primary);
+            border: none;
+            color: white;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s;
+        }
+
+        .ai-send-btn:hover {
+            background: var(--primary-dark);
+            transform: scale(1.05);
+        }
+
+        /* AI Insights Panel */
+        .ai-insights-panel {
+            background: linear-gradient(135deg, #F8FAFB 0%, #EEF2FF 100%);
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+            border: 1px solid rgba(30, 111, 219, 0.1);
+        }
+
+        .ai-insights-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+
+        .ai-insights-header h3 {
+            font-size: 1.125rem;
+            color: var(--dark);
+        }
+
+        .ai-insights-content {
+            display: grid;
+            gap: 1rem;
+        }
+
+        .insight-card {
+            background: white;
+            padding: 1rem;
+            border-radius: 8px;
+            display: flex;
+            gap: 1rem;
+            transition: transform 0.2s;
+            cursor: pointer;
+        }
+
+        .insight-card:hover {
+            transform: translateX(4px);
+            box-shadow: 0 2px 8px rgba(30, 111, 219, 0.1);
+        }
+
+        .insight-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 8px;
+            background: rgba(30, 111, 219, 0.1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.25rem;
+        }
+
+        .insight-text strong {
+            display: block;
+            margin-bottom: 0.25rem;
+            color: var(--dark);
+        }
+
+        .insight-text p {
+            font-size: 0.875rem;
+            color: var(--medium);
+            margin: 0;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .ai-chat-window {
+                width: calc(100vw - 2rem);
+                right: 1rem;
+                left: 1rem;
+                height: 500px;
+            }
+            
+            .ai-quick-actions {
+                grid-template-columns: 1fr;
+            }
+            
+            .ai-insights-panel {
+                padding: 1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="header-content">
+            <div class="logo">
+                <svg class="logo-icon" width="40" height="40" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <circle cx="50" cy="50" r="45" stroke="white" stroke-width="4"/>
+                    <path d="M25 50 L40 65 L70 30" stroke="white" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/>
+                    <rect x="35" y="55" width="8" height="20" fill="white" rx="2"/>
+                    <rect x="46" y="45" width="8" height="30" fill="white" rx="2"/>
+                    <rect x="57" y="50" width="8" height="25" fill="white" rx="2"/>
+                </svg>
+                <span style="font-size: 1.75rem; font-weight: 700;">TaxStream</span>
+            </div>
+            
+            <nav class="nav-items">
+                <a class="nav-link active">Dashboard</a>
+                <a class="nav-link">Transactions</a>
+                <a class="nav-link">Tax Planning</a>
+                <a class="nav-link" onclick="openModal('pricing-modal')">Pricing</a>
+            </nav>
+            
+            <div style="display: flex; align-items: center; gap: 1rem;">
+                <div class="live-indicator"></div>
+                <span style="font-size: 0.875rem; color: var(--medium);">ACH Live</span>
+                <button class="btn btn-primary">Get Started</button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <div class="container">
+        <!-- Onboarding Hero -->
+        <div class="onboarding-hero">
+            <h1>Solving the $68B Self-Employment Tax Gap</h1>
+            <p>Automatic tax withholding for content creators, freelancers, and digital economy workers</p>
+            
+            <div class="stats-row">
+                <div class="stat-item">
+                    <div class="stat-value">50M+</div>
+                    <div class="stat-label">Creators Globally</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-value">$8,500</div>
+                    <div class="stat-label">Avg. Surprise Tax Bill</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-value">59%</div>
+                    <div class="stat-label">Face Tax Penalties</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-value">$68B</div>
+                    <div class="stat-label">Annual Tax Gap</div>
+                </div>
+            </div>
+            
+            <button class="btn btn-secondary btn-large" style="margin-top: 2rem;" onclick="startOnboarding()">
+                Start Free Trial - Connect Your First Platform
+            </button>
+        </div>
+
+        <!-- AI Insights Panel -->
+        <div class="ai-insights-panel">
+            <div class="ai-insights-header">
+                <h3>🤖 AI-Powered Tax Intelligence</h3>
+                <button class="btn btn-secondary" onclick="refreshInsights()">
+                    <span id="refresh-icon">🔄</span> Refresh
+                </button>
+            </div>
+            <div class="ai-insights-content" id="insights-content">
+                <div class="insight-card" onclick="showInsightDetail('saving')">
+                    <div class="insight-icon">💰</div>
+                    <div class="insight-text">
+                        <strong>Tax Saving Opportunity</strong>
+                        <p>Based on your income pattern, setting aside an additional $200/month could save you from Q4 penalties.</p>
+                    </div>
+                </div>
+                <div class="insight-card" onclick="showInsightDetail('trend')">
+                    <div class="insight-icon">📈</div>
+                    <div class="insight-text">
+                        <strong>Income Trend Alert</strong>
+                        <p>Your income is up 23% this quarter. AI recommends adjusting withholding to 37% to match.</p>
+                    </div>
+                </div>
+                <div class="insight-card" onclick="showInsightDetail('deduction')">
+                    <div class="insight-icon">🎯</div>
+                    <div class="insight-text">
+                        <strong>Deduction Discovery</strong>
+                        <p>AI identified $1,200 in potential home office deductions based on your creator profile.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Platform Authentication Section -->
+        <div class="section">
+            <div class="section-header">
+                <h2 class="section-title">Step 1: Authenticate Your Income Platforms</h2>
+                <span style="color: var(--medium); font-size: 0.875rem;">Read-only access • Bank-grade security</span>
+            </div>
+            
+            <div class="platform-auth-grid" id="platform-grid">
+                <div class="platform-auth-card" onclick="authenticatePlatform('stripe')">
+                    <div class="connection-status"></div>
+                    <div class="platform-logo taxstream-logo">
+                        <svg viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <circle cx="50" cy="50" r="40" stroke="white" stroke-width="4"/>
+                            <path d="M25 50 L40 65 L70 30" stroke="white" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"/>
+                            <rect x="35" y="55" width="8" height="15" fill="white" rx="2"/>
+                            <rect x="46" y="45" width="8" height="25" fill="white" rx="2"/>
+                            <rect x="57" y="50" width="8" height="20" fill="white" rx="2"/>
+                        </svg>
+                    </div>
+                    <div class="platform-name">TaxStream Integration</div>
+                    <div class="platform-status">Demo: Click to simulate</div>
+                    <button class="btn btn-primary" style="width: 100%;">Connect Demo</button>
+                </div>
+                
+                <div class="platform-auth-card" onclick="authenticatePlatform('stripe')">
+                    <div class="connection-status"></div>
+                    <div class="platform-logo stripe-logo">S</div>
+                    <div class="platform-name">Stripe</div>
+                    <div class="platform-status">Connect subscription revenue</div>
+                    <button class="btn btn-primary" style="width: 100%;">Authenticate</button>
+                </div>
+                
+                <div class="platform-auth-card" onclick="authenticatePlatform('paypal')">
+                    <div class="connection-status"></div>
+                    <div class="platform-logo paypal-logo">PP</div>
+                    <div class="platform-name">PayPal</div>
+                    <div class="platform-status">Digital goods & services</div>
+                    <button class="btn btn-primary" style="width: 100%;">Authenticate</button>
+                </div>
+                
+                <div class="platform-auth-card" onclick="authenticatePlatform('shopify')">
+                    <div class="connection-status"></div>
+                    <div class="platform-logo shopify-logo">S</div>
+                    <div class="platform-name">Shopify</div>
+                    <div class="platform-status">E-commerce transactions</div>
+                    <button class="btn btn-primary" style="width: 100%;">Authenticate</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Real-time Dashboard -->
+        <div class="summary-grid">
+            <div class="summary-card">
+                <div class="card-label">
+                    <span>💰</span>
+                    Monthly Income (Live)
+                </div>
+                <div class="card-value" id="monthly-income">$8,000</div>
+                <div class="card-change" style="color: var(--success);">
+                    <span>↑</span> Real-time tracking active
+                </div>
+            </div>
+            
+            <div class="summary-card" style="background: var(--gradient); color: white; position: relative; overflow: hidden;">
+                <div style="position: absolute; top: -20px; right: -20px; width: 100px; height: 100px; background: rgba(255,255,255,0.1); border-radius: 50%;"></div>
+                <div class="card-label" style="color: white; opacity: 0.95;">
+                    <span>🔒</span>
+                    Tax Reserved (Segregated)
+                </div>
+                <div class="card-value" id="tax-reserved" style="color: white;">$2,832</div>
+                <div class="card-change" style="color: white; opacity: 0.95;">
+                    <span>✓</span> 35.4% auto-withheld
+                </div>
+            </div>
+            
+            <div class="summary-card">
+                <div class="card-label">
+                    <span>💳</span>
+                    Spendable Balance
+                </div>
+                <div class="card-value" id="spendable">$5,168</div>
+                <div class="card-change" style="color: var(--success);">
+                    <span>✓</span> Post-tax income
+                </div>
+            </div>
+            
+            <div class="summary-card">
+                <div class="card-label">
+                    <span>📊</span>
+                    Quarterly Payment
+                </div>
+                <div class="card-value" id="quarterly">$7,089</div>
+                <div class="card-change">
+                    <span>📅</span> Auto-pay enabled
+                </div>
+            </div>
+        </div>
+
+        <!-- Tax Breakdown Visualization -->
+        <div class="section">
+            <div class="section-header">
+                <h2 class="section-title">Your Tax Withholding Breakdown</h2>
+                <button class="btn btn-secondary" onclick="customizeTaxes()">Customize Rates</button>
+            </div>
+            
+            <div class="tax-breakdown">
+                <div class="breakdown-header">
+                    <span class="breakdown-title">YouTube Creator Profile - $8,000/month</span>
+                    <span class="breakdown-toggle" onclick="toggleBreakdown()">Details ↓</span>
+                </div>
+                
+                <div id="breakdown-details">
+                    <div class="breakdown-item">
+                        <div class="breakdown-label">
+                            <div class="breakdown-icon self-icon">SE</div>
+                            <span>Self-Employment Tax (15.3%)</span>
+                        </div>
+                        <span>$1,224</span>
+                    </div>
+                    
+                    <div class="breakdown-item">
+                        <div class="breakdown-label">
+                            <div class="breakdown-icon federal-icon">FED</div>
+                            <span>Federal Income Tax (22% on amounts over $44,725)</span>
+                        </div>
+                        <span>$1,108</span>
+                    </div>
+                    
+                    <div class="breakdown-item">
+                        <div class="breakdown-label">
+                            <div class="breakdown-icon state-icon">CA</div>
+                            <span>State Tax (California - 6%)</span>
+                        </div>
+                        <span>$480</span>
+                    </div>
+                    
+                    <div class="breakdown-item">
+                        <div class="breakdown-label">
+                            <strong>Total Monthly Withholding</strong>
+                        </div>
+                        <strong>$2,832</strong>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="progress-bar">
+                <div class="progress-fill" style="width: 35.4%;"></div>
+            </div>
+            <p style="text-align: center; color: var(--medium); font-size: 0.875rem; margin-top: 0.5rem;">
+                35.4% effective tax rate • Funds held in segregated high-yield account (4.5% APY)
+            </p>
+        </div>
+
+        <!-- Real-time Transaction Feed -->
+        <div class="section">
+            <div class="section-header">
+                <h2 class="section-title">Live Transaction Processing</h2>
+                <div style="display: flex; align-items: center; gap: 0.5rem;">
+                    <div class="live-indicator"></div>
+                    <span style="font-size: 0.875rem; color: var(--medium);">ACH Same-Day Settlement</span>
+                </div>
+            </div>
+            
+            <div class="transaction-feed" id="transaction-feed">
+                <!-- Transactions will be added here dynamically -->
+            </div>
+        </div>
+
+        <!-- Tax Loan Feature -->
+        <div class="section">
+            <div class="section-header">
+                <h2 class="section-title">Tax Bridge Financing</h2>
+                <span style="color: var(--success); font-size: 0.875rem;">Pre-approved based on income history</span>
+            </div>
+            
+            <div class="loan-calculator">
+                <p style="margin-bottom: 1rem;">Complete income visibility allows instant loan underwriting with minimal risk</p>
+                
+                <div class="loan-input-group">
+                    <div class="form-group">
+                        <label class="form-label">Loan Amount Needed</label>
+                        <input type="number" class="form-input" id="loan-amount" placeholder="$2,000" oninput="calculateLoan()">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label">Repayment Term</label>
+                        <select class="form-select" id="loan-term" onchange="calculateLoan()">
+                            <option value="3">3 months</option>
+                            <option value="6">6 months</option>
+                            <option value="12">12 months</option>
+                        </select>
+                    </div>
+                </div>
+                
+                <div class="loan-result" id="loan-result" style="display: none;">
+                    <div class="loan-result-row">
+                        <span>Loan Amount</span>
+                        <span id="loan-principal">$0</span>
+                    </div>
+                    <div class="loan-result-row">
+                        <span>APR (Below credit cards)</span>
+                        <span id="loan-apr">12%</span>
+                    </div>
+                    <div class="loan-result-row">
+                        <span>Monthly Payment</span>
+                        <span id="loan-payment">$0</span>
+                    </div>
+                    <div class="loan-result-row">
+                        <span><strong>Total Cost</strong></span>
+                        <span><strong id="loan-total">$0</strong></span>
+                    </div>
+                </div>
+                
+                <button class="btn btn-success" style="width: 100%; margin-top: 1rem;" onclick="applyForLoan()">
+                    Get Instant Approval
+                </button>
+            </div>
+        </div>
+
+        <!-- Revenue Model Display -->
+        <div class="section">
+            <div class="section-header">
+                <h2 class="section-title">How TaxStream Makes Money</h2>
+            </div>
+            
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 1rem;">
+                <div style="padding: 1rem; background: rgba(30, 111, 219, 0.05); border-left: 4px solid var(--primary); border-radius: 8px;">
+                    <h3 style="font-size: 1rem; margin-bottom: 0.5rem; color: var(--primary);">📱 SaaS Subscription</h3>
+                    <p style="font-size: 0.875rem; color: var(--medium);">$20-30/month for automated withholding</p>
+                </div>
+                
+                <div style="padding: 1rem; background: rgba(16, 185, 129, 0.05); border-left: 4px solid var(--success); border-radius: 8px;">
+                    <h3 style="font-size: 1rem; margin-bottom: 0.5rem; color: var(--success);">💰 Float Revenue</h3>
+                    <p style="font-size: 0.875rem; color: var(--medium);">Interest spread on $1,500-2,000 avg. reserves</p>
+                </div>
+                
+                <div style="padding: 1rem; background: rgba(245, 158, 11, 0.05); border-left: 4px solid var(--warning); border-radius: 8px;">
+                    <h3 style="font-size: 1rem; margin-bottom: 0.5rem; color: var(--warning);">💳 Tax Loans</h3>
+                    <p style="font-size: 0.875rem; color: var(--medium);">Bridge financing at competitive APR</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modals -->
+    <!-- Pricing Modal -->
+    <div class="modal" id="pricing-modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 class="modal-title">Simple, Transparent Pricing</h2>
+                <button class="modal-close" onclick="closeModal('pricing-modal')">×</button>
+            </div>
+            
+            <div class="pricing-cards">
+                <div class="pricing-card">
+                    <div class="pricing-title">Starter</div>
+                    <div class="pricing-price">$20</div>
+                    <div class="pricing-period">per month</div>
+                    <ul class="pricing-features">
+                        <li><span class="check-icon">✓</span> 1 Platform Connection</li>
+                        <li><span class="check-icon">✓</span> Auto Tax Withholding</li>
+                        <li><span class="check-icon">✓</span> Quarterly Payments</li>
+                        <li><span class="check-icon">✓</span> Basic Reports</li>
+                    </ul>
+                    <button class="btn btn-secondary" style="width: 100%;">Start Free Trial</button>
+                </div>
+                
+                <div class="pricing-card recommended">
+                    <div class="pricing-badge">RECOMMENDED</div>
+                    <div class="pricing-title">Professional</div>
+                    <div class="pricing-price">$30</div>
+                    <div class="pricing-period">per month</div>
+                    <ul class="pricing-features">
+                        <li><span class="check-icon">✓</span> Unlimited Platforms</li>
+                        <li><span class="check-icon">✓</span> Smart Tax Optimization</li>
+                        <li><span class="check-icon">✓</span> Auto-Pay to IRS</li>
+                        <li><span class="check-icon">✓</span> Tax Loan Access</li>
+                        <li><span class="check-icon">✓</span> Priority Support</li>
+                    </ul>
+                    <button class="btn btn-primary" style="width: 100%;">Start Free Trial</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Platform Authentication Modal -->
+    <div class="modal" id="auth-modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 class="modal-title" id="auth-title">Connect Platform</h2>
+                <button class="modal-close" onclick="closeModal('auth-modal')">×</button>
+            </div>
+            
+            <div id="auth-content">
+                <!-- Dynamic content will be inserted here -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Notification -->
+    <div class="notification" id="notification">
+        <div style="width: 32px; height: 32px; border-radius: 50%; background: rgba(16, 185, 129, 0.1); display: flex; align-items: center; justify-content: center; color: var(--success);">✓</div>
+        <div>
+            <div id="notification-title" style="font-weight: 600;">Success!</div>
+            <div id="notification-message" style="font-size: 0.875rem; color: var(--medium);">Action completed successfully.</div>
+        </div>
+    </div>
+
+    <!-- AI Assistant Chat -->
+    <div class="ai-assistant-container" id="ai-assistant">
+        <div class="ai-chat-button" onclick="toggleAIAssistant()">
+            <div class="ai-avatar">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+                    <path d="M12 2L2 7V12C2 16.5 4.23 20.68 8 22.34V20.85C5.15 19.36 3.5 15.98 3.5 12.22V8.08L12 4.15L20.5 8.08V12.22C20.5 15.95 18.85 19.33 16 20.83V22.32C19.77 20.66 22 16.48 22 12V7L12 2Z" fill="white"/>
+                    <circle cx="12" cy="12" r="3" fill="white"/>
+                    <path d="M12 15L8 19H16L12 15Z" fill="white"/>
+                </svg>
+            </div>
+            <span>AI Tax Assistant</span>
+            <div class="ai-status-indicator"></div>
+        </div>
+        
+        <div class="ai-chat-window" id="ai-chat-window">
+            <div class="ai-chat-header">
+                <div style="display: flex; align-items: center; gap: 0.75rem;">
+                    <div class="ai-avatar-small">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+                            <path d="M12 2L2 7V12C2 16.5 4.23 20.68 8 22.34V20.85C5.15 19.36 3.5 15.98 3.5 12.22V8.08L12 4.15L20.5 8.08V12.22C20.5 15.95 18.85 19.33 16 20.83V22.32C19.77 20.66 22 16.48 22 12V7L12 2Z" fill="white"/>
+                            <circle cx="12" cy="12" r="3" fill="white"/>
+                        </svg>
+                    </div>
+                    <div>
+                        <div style="font-weight: 600;">TaxStream AI Assistant</div>
+                        <div style="font-size: 0.75rem; opacity: 0.9;">Powered by AI • Available 24/7</div>
+                    </div>
+                </div>
+                <button class="ai-close-btn" onclick="toggleAIAssistant()">×</button>
+            </div>
+            
+            <div class="ai-quick-actions">
+                <button class="ai-quick-btn" onclick="askAI('calculate')">📊 Calculate My Taxes</button>
+                <button class="ai-quick-btn" onclick="askAI('optimize')">💡 Optimize Deductions</button>
+                <button class="ai-quick-btn" onclick="askAI('quarterly')">📅 Quarterly Payment</button>
+                <button class="ai-quick-btn" onclick="askAI('explain')">❓ Explain My Breakdown</button>
+            </div>
+            
+            <div class="ai-chat-messages" id="ai-messages">
+                <div class="ai-message assistant">
+                    <div class="message-avatar">AI</div>
+                    <div class="message-content">
+                        <p>👋 Hi! I'm your AI Tax Assistant. I can help you with:</p>
+                        <ul style="margin: 0.5rem 0; padding-left: 1.5rem; font-size: 0.875rem;">
+                            <li>Real-time tax calculations</li>
+                            <li>Deduction recommendations</li>
+                            <li>Quarterly payment planning</li>
+                            <li>Tax optimization strategies</li>
+                            <li>Platform setup guidance</li>
+                        </ul>
+                        <p>What would you like to know?</p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="ai-chat-input-container">
+                <input type="text" class="ai-chat-input" id="ai-input" placeholder="Ask me anything about taxes..." onkeypress="handleAIEnter(event)">
+                <button class="ai-send-btn" onclick="sendAIMessage()">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+                        <path d="M2 21L23 12L2 3V10L17 12L2 14V21Z" fill="currentColor"/>
+                    </svg>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- AI Insights Panel -->
+    <div class="ai-insights-panel" id="ai-insights">
+        <div class="ai-insights-header">
+            <h3>🤖 AI-Powered Insights</h3>
+            <button class="btn btn-secondary" onclick="refreshInsights()">Refresh</button>
+        </div>
+        <div class="ai-insights-content" id="insights-content">
+            <div class="insight-card">
+                <div class="insight-icon">💰</div>
+                <div class="insight-text">
+                    <strong>Tax Saving Opportunity</strong>
+                    <p>Based on your income pattern, setting aside an additional $200/month could save you from Q4 penalties.</p>
+                </div>
+            </div>
+            <div class="insight-card">
+                <div class="insight-icon">📈</div>
+                <div class="insight-text">
+                    <strong>Income Trend</strong>
+                    <p>Your income is up 23% this quarter. Consider adjusting your withholding rate to 37% to match.</p>
+                </div>
+            </div>
+            <div class="insight-card">
+                <div class="insight-icon">🎯</div>
+                <div class="insight-text">
+                    <strong>Deduction Alert</strong>
+                    <p>You may qualify for $1,200 in home office deductions based on your creator profile.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Global state
+        let state = {
+            connectedPlatforms: [],
+            monthlyIncome: 8000,
+            taxRate: 35.4,
+            transactions: [],
+            loanAmount: 0,
+            authInProgress: null
+        };
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', function() {
+            startRealtimeSimulation();
+            updateDashboard();
+        });
+
+        // Real-time transaction simulation
+        function startRealtimeSimulation() {
+            // Simulate incoming transactions
+            setInterval(() => {
+                if (state.connectedPlatforms.length > 0) {
+                    addRandomTransaction();
+                }
+            }, 5000);
+            
+            // Update tax reserved amount
+            setInterval(() => {
+                if (state.connectedPlatforms.length > 0) {
+                    const reserved = document.getElementById('tax-reserved');
+                    const current = parseFloat(reserved.textContent.replace('$', '').replace(',', ''));
+                    const increment = (Math.random() * 50 + 10);
+                    reserved.textContent = formatCurrency(current + increment);
+                }
+            }, 3000);
+        }
+
+        // Add random transaction to feed
+        function addRandomTransaction() {
+            const platforms = ['Stripe', 'PayPal', 'Shopify'];
+            const descriptions = [
+                'Subscription Revenue',
+                'Course Sale',
+                'Digital Product',
+                'Consulting Fee',
+                'Ad Revenue',
+                'Affiliate Commission'
+            ];
+            
+            const platform = platforms[Math.floor(Math.random() * platforms.length)];
+            const description = descriptions[Math.floor(Math.random() * descriptions.length)];
+            const amount = Math.floor(Math.random() * 2000) + 500;
+            const taxWithheld = amount * (state.taxRate / 100);
+            
+            const transaction = {
+                platform,
+                description,
+                amount,
+                taxWithheld,
+                timestamp: new Date().toLocaleTimeString()
+            };
+            
+            addTransactionToFeed(transaction);
+            
+            // Update monthly income
+            const incomeEl = document.getElementById('monthly-income');
+            const currentIncome = parseFloat(incomeEl.textContent.replace('$', '').replace(',', ''));
+            incomeEl.textContent = formatCurrency(currentIncome + amount);
+            
+            // Update spendable
+            const spendableEl = document.getElementById('spendable');
+            const currentSpendable = parseFloat(spendableEl.textContent.replace('$', '').replace(',', ''));
+            spendableEl.textContent = formatCurrency(currentSpendable + (amount - taxWithheld));
+        }
+
+        // Add transaction to feed
+        function addTransactionToFeed(transaction) {
+            const feed = document.getElementById('transaction-feed');
+            
+            const item = document.createElement('div');
+            item.className = 'transaction-item';
+            item.innerHTML = `
+                <div class="transaction-left">
+                    <div class="transaction-icon income-transaction">$</div>
+                    <div class="transaction-details">
+                        <div class="transaction-description">${transaction.description}</div>
+                        <div class="transaction-time">${transaction.platform} • ${transaction.timestamp}</div>
+                    </div>
+                </div>
+                <div class="transaction-amounts">
+                    <div class="gross-amount">+${formatCurrency(transaction.amount)}</div>
+                    <div class="tax-amount">Tax withheld: ${formatCurrency(transaction.taxWithheld)}</div>
+                </div>
+            `;
+            
+            feed.insertBefore(item, feed.firstChild);
+            
+            // Keep only last 5 transactions
+            while (feed.children.length > 5) {
+                feed.removeChild(feed.lastChild);
+            }
+        }
+
+        // Platform authentication
+        function authenticatePlatform(platform) {
+            state.authInProgress = platform;
+            const modal = document.getElementById('auth-modal');
+            const title = document.getElementById('auth-title');
+            const content = document.getElementById('auth-content');
+            
+            const platformNames = {
+                'stripe': 'Stripe',
+                'paypal': 'PayPal',
+                'shopify': 'Shopify'
+            };
+            
+            title.textContent = `Connect ${platformNames[platform]}`;
+            
+            content.innerHTML = `
+                <div style="text-align: center; padding: 2rem 0;">
+                    <div style="width: 80px; height: 80px; margin: 0 auto 1.5rem; background: var(--light); border-radius: 50%; display: flex; align-items: center; justify-content: center;">
+                        <div style="width: 50px; height: 50px; background: var(--gradient); border-radius: 8px;"></div>
+                    </div>
+                    <h3 style="margin-bottom: 1rem;">Secure OAuth Connection</h3>
+                    <p style="color: var(--medium); margin-bottom: 2rem;">
+                        You'll be redirected to ${platformNames[platform]} to authorize read-only access to your transaction data.
+                    </p>
+                    <div style="background: rgba(30, 111, 219, 0.1); padding: 1rem; border-radius: 8px; text-align: left; margin-bottom: 2rem;">
+                        <p style="font-size: 0.875rem; margin-bottom: 0.5rem; color: var(--primary);"><strong>TaxStream will access:</strong></p>
+                        <ul style="font-size: 0.875rem; color: var(--medium); margin-left: 1.5rem;">
+                            <li>Transaction amounts and dates</li>
+                            <li>Payment descriptions</li>
+                            <li>Customer information (anonymized)</li>
+                        </ul>
+                        <p style="font-size: 0.875rem; margin-top: 0.5rem;"><strong>TaxStream will NOT access:</strong></p>
+                        <ul style="font-size: 0.875rem; color: var(--medium); margin-left: 1.5rem;">
+                            <li>Your bank account details</li>
+                            <li>Customer payment methods</li>
+                            <li>Ability to process refunds or charges</li>
+                        </ul>
+                    </div>
+                    <button class="btn btn-primary btn-large" onclick="completeAuthentication('${platform}')">
+                        Authorize ${platformNames[platform]} →
+                    </button>
+                </div>
+            `;
+            
+            openModal('auth-modal');
+        }
+
+        // Complete authentication
+        function completeAuthentication(platform) {
+            // Simulate OAuth flow
+            closeModal('auth-modal');
+            
+            const card = document.querySelector(`.platform-auth-card:has(.platform-name:contains("${platform.charAt(0).toUpperCase() + platform.slice(1)}"))`);
+            if (card) {
+                card.classList.add('connecting');
+                const button = card.querySelector('button');
+                button.textContent = 'Connecting...';
+                button.disabled = true;
+                
+                setTimeout(() => {
+                    card.classList.remove('connecting');
+                    card.classList.add('connected');
+                    card.querySelector('.connection-status').classList.add('connected');
+                    button.textContent = 'Connected ✓';
+                    button.classList.remove('btn-primary');
+                    button.classList.add('btn-success');
+                    
+                    state.connectedPlatforms.push(platform);
+                    
+                    showNotification('Platform Connected', `${platform.charAt(0).toUpperCase() + platform.slice(1)} is now syncing transactions`);
+                    
+                    // Start adding transactions
+                    setTimeout(() => {
+                        addRandomTransaction();
+                    }, 1000);
+                }, 2000);
+            }
+        }
+
+        // Dashboard updates
+        function updateDashboard() {
+            const monthlyIncome = state.monthlyIncome;
+            const taxWithheld = monthlyIncome * (state.taxRate / 100);
+            const spendable = monthlyIncome - taxWithheld;
+            const quarterly = taxWithheld * 3;
+            
+            document.getElementById('monthly-income').textContent = formatCurrency(monthlyIncome);
+            document.getElementById('tax-reserved').textContent = formatCurrency(taxWithheld);
+            document.getElementById('spendable').textContent = formatCurrency(spendable);
+            document.getElementById('quarterly').textContent = formatCurrency(quarterly);
+        }
+
+        // Loan calculator
+        function calculateLoan() {
+            const amount = parseFloat(document.getElementById('loan-amount').value) || 0;
+            const term = parseInt(document.getElementById('loan-term').value) || 3;
+            
+            if (amount === 0) {
+                document.getElementById('loan-result').style.display = 'none';
+                return;
+            }
+            
+            const apr = 0.12; // 12% APR
+            const monthlyRate = apr / 12;
+            const monthlyPayment = amount * (monthlyRate * Math.pow(1 + monthlyRate, term)) / (Math.pow(1 + monthlyRate, term) - 1);
+            const totalPayment = monthlyPayment * term;
+            const totalInterest = totalPayment - amount;
+            
+            document.getElementById('loan-principal').textContent = formatCurrency(amount);
+            document.getElementById('loan-payment').textContent = formatCurrency(monthlyPayment);
+            document.getElementById('loan-total').textContent = formatCurrency(totalPayment);
+            
+            document.getElementById('loan-result').style.display = 'block';
+        }
+
+        // Apply for loan
+        function applyForLoan() {
+            const amount = document.getElementById('loan-amount').value;
+            if (!amount) {
+                alert('Please enter a loan amount');
+                return;
+            }
+            
+            showNotification('Loan Approved!', `$${amount} will be deposited within 24 hours`);
+        }
+
+        // Toggle breakdown
+        function toggleBreakdown() {
+            const details = document.getElementById('breakdown-details');
+            const toggle = document.querySelector('.breakdown-toggle');
+            
+            if (details.style.display === 'none') {
+                details.style.display = 'block';
+                toggle.textContent = 'Details ↑';
+            } else {
+                details.style.display = 'none';
+                toggle.textContent = 'Details ↓';
+            }
+        }
+
+        // Customize taxes
+        function customizeTaxes() {
+            alert('Tax customization feature - You can adjust federal, state, and self-employment tax rates based on your specific situation');
+        }
+
+        // Start onboarding
+        function startOnboarding() {
+            const firstCard = document.querySelector('.platform-auth-card');
+            firstCard.scrollIntoView({ behavior: 'smooth' });
+            firstCard.style.animation = 'pulse 1s ease-in-out 3';
+        }
+
+        // Modal functions
+        function openModal(modalId) {
+            document.getElementById(modalId).classList.add('active');
+        }
+
+        function closeModal(modalId) {
+            document.getElementById(modalId).classList.remove('active');
+        }
+
+        // Notifications
+        function showNotification(title, message) {
+            const notification = document.getElementById('notification');
+            document.getElementById('notification-title').textContent = title;
+            document.getElementById('notification-message').textContent = message;
+            
+            notification.classList.add('show');
+            
+            setTimeout(() => {
+                notification.classList.remove('show');
+            }, 5000);
+        }
+
+        // AI Assistant Functions
+        let aiChatOpen = false;
+        let aiConversation = [];
+
+        function toggleAIAssistant() {
+            const chatWindow = document.getElementById('ai-chat-window');
+            aiChatOpen = !aiChatOpen;
+            
+            if (aiChatOpen) {
+                chatWindow.classList.add('active');
+                document.getElementById('ai-input').focus();
+            } else {
+                chatWindow.classList.remove('active');
+            }
+        }
+
+        function handleAIEnter(event) {
+            if (event.key === 'Enter') {
+                sendAIMessage();
+            }
+        }
+
+        function sendAIMessage() {
+            const input = document.getElementById('ai-input');
+            const message = input.value.trim();
+            
+            if (!message) return;
+            
+            // Add user message
+            addAIMessage(message, 'user');
+            input.value = '';
+            
+            // Show typing indicator
+            showAITyping();
+            
+            // Simulate AI response
+            setTimeout(() => {
+                removeAITyping();
+                const response = generateAIResponse(message);
+                addAIMessage(response, 'assistant');
+            }, 1500);
+        }
+
+        function addAIMessage(content, type) {
+            const messagesContainer = document.getElementById('ai-messages');
+            const messageDiv = document.createElement('div');
+            messageDiv.className = `ai-message ${type}`;
+            
+            const avatar = document.createElement('div');
+            avatar.className = 'message-avatar';
+            avatar.textContent = type === 'user' ? 'You' : 'AI';
+            
+            const messageContent = document.createElement('div');
+            messageContent.className = 'message-content';
+            messageContent.innerHTML = content;
+            
+            messageDiv.appendChild(avatar);
+            messageDiv.appendChild(messageContent);
+            messagesContainer.appendChild(messageDiv);
+            
+            // Scroll to bottom
+            messagesContainer.scrollTop = messagesContainer.scrollHeight;
+        }
+
+        function showAITyping() {
+            const messagesContainer = document.getElementById('ai-messages');
+            const typingDiv = document.createElement('div');
+            typingDiv.className = 'ai-message assistant';
+            typingDiv.id = 'ai-typing';
+            
+            typingDiv.innerHTML = `
+                <div class="message-avatar">AI</div>
+                <div class="message-content">
+                    <div class="ai-typing">
+                        <div class="typing-dot"></div>
+                        <div class="typing-dot"></div>
+                        <div class="typing-dot"></div>
+                    </div>
+                </div>
+            `;
+            
+            messagesContainer.appendChild(typingDiv);
+            messagesContainer.scrollTop = messagesContainer.scrollHeight;
+        }
+
+        function removeAITyping() {
+            const typingDiv = document.getElementById('ai-typing');
+            if (typingDiv) {
+                typingDiv.remove();
+            }
+        }
+
+        function generateAIResponse(message) {
+            const lowerMessage = message.toLowerCase();
+            
+            if (lowerMessage.includes('tax') && lowerMessage.includes('owe')) {
+                return `Based on your current income of <strong>${state.monthlyIncome.toLocaleString()}/month</strong>, you should be withholding approximately <strong>${Math.round(state.monthlyIncome * 0.354).toLocaleString()}</strong> monthly for taxes.<br><br>This breaks down to:
+                <ul style="margin: 0.5rem 0;">
+                    <li>Federal: ${Math.round(state.monthlyIncome * 0.22).toLocaleString()}</li>
+                    <li>Self-Employment: ${Math.round(state.monthlyIncome * 0.153).toLocaleString()}</li>
+                    <li>State: ${Math.round(state.monthlyIncome * 0.06).toLocaleString()}</li>
+                </ul>
+                Your quarterly payment will be approximately <strong>${Math.round(state.monthlyIncome * 0.354 * 3).toLocaleString()}</strong>.`;
+            }
+            
+            if (lowerMessage.includes('deduction')) {
+                return `Great question! As a content creator, you may qualify for these deductions:
+                <ul style="margin: 0.5rem 0;">
+                    <li><strong>Home Office:</strong> $1,200-2,400/year</li>
+                    <li><strong>Equipment:</strong> Cameras, computers, lighting</li>
+                    <li><strong>Software:</strong> Editing tools, subscriptions</li>
+                    <li><strong>Internet/Phone:</strong> Business percentage</li>
+                    <li><strong>Travel:</strong> Content creation trips</li>
+                </ul>
+                Would you like me to calculate your estimated deductions?`;
+            }
+            
+            if (lowerMessage.includes('quarterly') || lowerMessage.includes('q1') || lowerMessage.includes('q2')) {
+                return `Your quarterly tax payment schedule for 2024:
+                <ul style="margin: 0.5rem 0;">
+                    <li><strong>Q1:</strong> Due April 15 - ${Math.round(state.monthlyIncome * 0.354 * 3).toLocaleString()}</li>
+                    <li><strong>Q2:</strong> Due June 15 - ${Math.round(state.monthlyIncome * 0.354 * 3).toLocaleString()}</li>
+                    <li><strong>Q3:</strong> Due Sept 15 - ${Math.round(state.monthlyIncome * 0.354 * 3).toLocaleString()}</li>
+                    <li><strong>Q4:</strong> Due Jan 15 - ${Math.round(state.monthlyIncome * 0.354 * 3).toLocaleString()}</li>
+                </ul>
+                TaxStream will automatically pay these for you from your tax reserve account.`;
+            }
+            
+            if (lowerMessage.includes('save') || lowerMessage.includes('optimize')) {
+                return `Here are AI-powered tax optimization strategies for you:
+                <ol style="margin: 0.5rem 0;">
+                    <li><strong>Maximize deductions:</strong> Track all business expenses in real-time</li>
+                    <li><strong>Retirement contributions:</strong> Consider a SEP-IRA (up to 25% of income)</li>
+                    <li><strong>Quarterly adjustments:</strong> Increase withholding by 2% to build buffer</li>
+                    <li><strong>Estimated savings:</strong> ${Math.round(state.monthlyIncome * 0.15).toLocaleString()}/month in reduced tax liability</li>
+                </ol>
+                Would you like me to set up automated optimization?`;
+            }
+            
+            if (lowerMessage.includes('connect') || lowerMessage.includes('platform')) {
+                return `To connect your income platforms:
+                <ol style="margin: 0.5rem 0;">
+                    <li>Click on any platform card (Stripe, PayPal, Shopify)</li>
+                    <li>Authorize read-only access to transactions</li>
+                    <li>TaxStream begins automatic withholding immediately</li>
+                </ol>
+                Your data is encrypted and we never access your banking credentials. Need help connecting a specific platform?`;
+            }
+            
+            if (lowerMessage.includes('hello') || lowerMessage.includes('hi') || lowerMessage.includes('help')) {
+                return `Hello! I'm your AI Tax Assistant. I can help you with:
+                <ul style="margin: 0.5rem 0;">
+                    <li>📊 Calculate your tax obligations</li>
+                    <li>💡 Find deductions you're missing</li>
+                    <li>📅 Plan quarterly payments</li>
+                    <li>🎯 Optimize your withholding rate</li>
+                    <li>🔗 Connect income platforms</li>
+                </ul>
+                What would you like to know?`;
+            }
+            
+            return `I understand you're asking about "${message}". Let me analyze your tax situation...<br><br>
+            Based on your profile as a content creator earning ${state.monthlyIncome.toLocaleString()}/month, I recommend maintaining a ${state.taxRate}% withholding rate. 
+            <br><br>Would you like me to provide more specific guidance on this topic?`;
+        }
+
+        function askAI(topic) {
+            let message = '';
+            
+            switch(topic) {
+                case 'calculate':
+                    message = 'How much tax do I owe this quarter?';
+                    break;
+                case 'optimize':
+                    message = 'How can I optimize my tax deductions?';
+                    break;
+                case 'quarterly':
+                    message = 'When are my quarterly payments due?';
+                    break;
+                case 'explain':
+                    message = 'Can you explain my tax breakdown?';
+                    break;
+            }
+            
+            document.getElementById('ai-input').value = message;
+            sendAIMessage();
+        }
+
+        function refreshInsights() {
+            const refreshIcon = document.getElementById('refresh-icon');
+            refreshIcon.style.display = 'inline-block';
+            refreshIcon.style.animation = 'spin 1s linear';
+            
+            setTimeout(() => {
+                // Generate new insights
+                const insights = [
+                    {
+                        icon: '🎉',
+                        title: 'Congratulations!',
+                        text: 'Your withholding rate is optimal. You\'re on track to avoid penalties.'
+                    },
+                    {
+                        icon: '⚡',
+                        title: 'Quick Win',
+                        text: 'Connect PayPal to capture an additional $500/month in tracked income.'
+                    },
+                    {
+                        icon: '📱',
+                        title: 'Mobile App Tip',
+                        text: 'Track receipts on-the-go to maximize your deductions by 20%.'
+                    },
+                    {
+                        icon: '🏦',
+                        title: 'Banking Insight',
+                        text: 'Your tax reserve account earned $42 in interest this month.'
+                    }
+                ];
+                
+                const randomInsights = insights.sort(() => 0.5 - Math.random()).slice(0, 3);
+                
+                const container = document.getElementById('insights-content');
+                container.innerHTML = '';
+                
+                randomInsights.forEach(insight => {
+                    const card = document.createElement('div');
+                    card.className = 'insight-card';
+                    card.onclick = () => showInsightDetail(insight.title);
+                    card.innerHTML = `
+                        <div class="insight-icon">${insight.icon}</div>
+                        <div class="insight-text">
+                            <strong>${insight.title}</strong>
+                            <p>${insight.text}</p>
+                        </div>
+                    `;
+                    container.appendChild(card);
+                });
+                
+                refreshIcon.style.animation = '';
+                showNotification('Insights Updated', 'AI has analyzed your latest tax data');
+            }, 1000);
+        }
+
+        function showInsightDetail(type) {
+            // Open AI chat with relevant context
+            if (!aiChatOpen) {
+                toggleAIAssistant();
+            }
+            
+            setTimeout(() => {
+                let message = '';
+                switch(type) {
+                    case 'saving':
+                        message = 'Tell me more about the tax saving opportunity';
+                        break;
+                    case 'trend':
+                        message = 'Explain my income trend and recommended adjustments';
+                        break;
+                    case 'deduction':
+                        message = 'What deductions am I eligible for?';
+                        break;
+                    default:
+                        message = 'Tell me more about this insight';
+                }
+                document.getElementById('ai-input').value = message;
+                sendAIMessage();
+            }, 300);
+        }
+    </script>
+</body>
+</html>
